@@ -17,8 +17,22 @@ from langgraph.checkpoint.memory import MemorySaver
 
 load_dotenv(find_dotenv(), override=True)
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-TAVILY_API_KEY = os.getenv("TAVILY_API_KEY")
+try:
+    OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]
+    TAVILY_API_KEY = st.secrets["TAVILY_API_KEY"]
+except Exception:
+    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+    TAVILY_API_KEY = os.getenv("TAVILY_API_KEY")
+
+if not OPENAI_API_KEY:
+    st.error("OPENAI_API_KEY is missing.")
+    st.stop()
+
+if not TAVILY_API_KEY:
+    st.error("TAVILY_API_KEY is missing.")
+    st.stop()
+
+os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
 
 # -----------------------------
 # Streamlit setup
@@ -337,7 +351,7 @@ with st.sidebar:
                 if st.button(topic_option, key=f"{area}_{topic_option}", use_container_width=True):
                     st.session_state["selected_topic"] = topic_option
 
-                    
+
 
 st.title("🧠 Agentic Essay Writer")
 
